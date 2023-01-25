@@ -1,27 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import logger from 'redux-logger';
 
 // reducer!
 const count = (state = 0, action) => {
     console.log(`Hey!!! I'm a reducer y'all!!!`);
-
+    console.log('action', action);
+    if(action.type === 'INCREASE'){
+      return state + 1;
+    } else if (action.type === 'DECREASE'){
+      return state - 1;
+    }
     return state;
 };
 
-const elementList = (state = [], action) => {
+const elementList = (state = ['oxygen', 'hydrogen'], action) => {
+  console.log('action inside elementList', action.payload);
+  if(action.type === 'ADD_ELEMENT'){
+    let newArray = [...state, action.payload];
+    return newArray;
+  }
   return state;
 };
 
 // store!
 const storeInstance = createStore(
   combineReducers(
-      {
-          count,
-          elementList,
-      }
+    {
+        count,
+        elementList,
+    }
+  ),
+  applyMiddleware(
+    logger
   )
 );
 
